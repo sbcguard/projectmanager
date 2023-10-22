@@ -6,12 +6,12 @@ generator client {
 }
 
 datasource db {
-  provider = "mongodb"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  id            Int       @id @default(autoincrement()) @map("_id")
   name          String
   email         String    @unique
   emailVerified DateTime?
@@ -22,37 +22,37 @@ model User {
 }
 
 model Account {
-  id                String  @id @default(auto()) @map("_id") @db.ObjectId
-  userId            String  @db.ObjectId
+  id                Int     @id @default(autoincrement()) @map("_id")
+  userId            Int
   user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? @db.String
-  access_token      String? @db.String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.String
+  id_token          String? @db.Text
   session_state     String?
 
   @@unique([provider, providerAccountId])
 }
 
 model Project {
-  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  id            Int            @id @default(autoincrement()) @map("_id")
   name          String         @unique
   description   String
   slug          String         @unique
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   projectBoards ProjectBoard[]
-  userId        String         @db.ObjectId
+  userId        Int
   user          User           @relation(fields: [userId], references: [id])
 }
 
 model ProjectBoard {
-  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  id        Int       @id @default(autoincrement()) @map("_id")
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   status    String
@@ -60,7 +60,7 @@ model ProjectBoard {
   slug      String
   features  Feature[]
   project   Project   @relation(fields: [projectId], references: [id])
-  projectId String    @db.ObjectId
+  projectId Int
 
   @@unique([slug, status, projectId])
 }
@@ -72,7 +72,7 @@ enum Priority {
 }
 
 model Feature {
-  id             String       @id @default(auto()) @map("_id") @db.ObjectId
+  id             Int          @id @default(autoincrement()) @map("_id")
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
   slug           String
@@ -82,16 +82,16 @@ model Feature {
   finishDate     DateTime
   order          Int
   projectBoard   ProjectBoard @relation(fields: [projectBoardId], references: [id])
-  projectBoardId String       @db.ObjectId
+  projectBoardId Int
 
   @@unique([slug, projectBoardId])
 }
 
 model AiChat {
-  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  id      Int      @id @default(autoincrement()) @map("_id")
   role    ChatRole
   content String
-  userId  String   @db.ObjectId
+  userId  Int
   user    User     @relation(fields: [userId], references: [id])
 }
 
