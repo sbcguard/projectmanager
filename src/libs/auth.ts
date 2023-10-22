@@ -19,6 +19,7 @@ export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
     session: async ({ session, token }) => {
+      console.log(session, token);
       const userEmail = token.email;
       const user = await prisma.user.findUnique({
         where: { email: userEmail as string },
